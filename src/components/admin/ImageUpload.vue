@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref } from 'vue';
 import { useInvitationStore } from '@/stores/useInvitationStore';
 import { compressToWebP } from '@/utils/imageCompression';
 
@@ -14,7 +14,6 @@ const emit = defineEmits(['update:modelValue']);
 const store = useInvitationStore();
 
 const isUploading = ref(false);
-const uploadProgress = ref(0); // Optional: if we want to show percentage
 const errorMsg = ref('');
 
 const onFileChange = async (event: Event) => {
