@@ -19,7 +19,6 @@ const akadAddressDetails = computed(() => props.invitation?.customTexts?.akadAdd
 const resepsiAddressTitle = computed(() => props.invitation?.customTexts?.resepsiAddressTitle || 'KEDIAMAN MEMPELAI WANITA');
 const resepsiAddressDetails = computed(() => props.invitation?.customTexts?.resepsiAddressDetails || 'Kp. Cikareumbi RT 04/04, Gang Aki Sana, Desa Cikidang, Kec. Lembang, Kab. Bandung Barat');
 
-const akadMapUrl = computed(() => `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${akadAddressTitle.value} ${akadAddressDetails.value}`)}`);
 const resepsiMapUrl = computed(() => `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${resepsiAddressTitle.value} ${resepsiAddressDetails.value}`)}`);
 
 const eventDateObj = computed(() => {

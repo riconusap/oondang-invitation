@@ -47,8 +47,6 @@ const formatDateParts = (dateStr: string | undefined, defaultDateStr: string) =>
 const akadDateObj = computed(() => formatDateParts(props.invitation?.customTexts?.akadDate, props.invitation?.customTexts?.eventDateRaw || '2026-12-12'));
 const resepsiDateObj = computed(() => formatDateParts(props.invitation?.customTexts?.resepsiDate, props.invitation?.customTexts?.eventDateRaw || '2026-12-12'));
 
-const day = computed(() => eventDateObj.value.getDate().toString().padStart(2, '0'));
-const month = computed(() => (eventDateObj.value.getMonth() + 1).toString().padStart(2, '0'));
 // Countdown Logic
 const targetDateStr = computed(() => {
     return `${eventDateObj.value.getFullYear()}-${(eventDateObj.value.getMonth()+1).toString().padStart(2,'0')}-${eventDateObj.value.getDate().toString().padStart(2,'0')}T08:00:00`;
