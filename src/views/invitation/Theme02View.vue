@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, computed } from 'vue';
 import { useRoute } from 'vue-router';
-import type { Invitation } from '@/types/invitation';
+
 import { useInvitationStore } from '@/stores/useInvitationStore';
 import { getFormattedDate } from '@/lib/utils';
 
