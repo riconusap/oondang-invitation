@@ -9,6 +9,8 @@ services:
         - VITE_SUPABASE_URL=${VITE_SUPABASE_URL}
         - VITE_SUPABASE_ANON_KEY=${VITE_SUPABASE_ANON_KEY}
     container_name: oondang-invitation-web
+    env_file:
+      - .env
     ports:
       - "8080:80"
     restart: unless-stopped
