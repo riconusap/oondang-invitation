@@ -52,7 +52,7 @@ const gallery4 = computed(() => props.invitation?.customImages?.gallery_4 || 'ht
                   <img :src="gallery3" alt="Gallery 3" class="w-full h-full object-cover transition-transform hover:scale-105 duration-700">
               </div>
               <div class="col-span-2 row-span-1 rounded-[2rem] overflow-hidden shadow-md border border-sage-100">
-                  <img :src="gallery4" alt="Gallery 4" class="w-full h-full object-cover transition-transform hover:scale-105 duration-700">
+                  <img :src="gallery4" alt="Gallery 4" class="w-full h-auto transition-transform hover:scale-105 duration-700">
               </div>
           </div>
       </div>

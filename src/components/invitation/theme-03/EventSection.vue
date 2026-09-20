@@ -15,28 +15,14 @@ const { isIntersecting: isHeaderIntersecting } = useIntersectionObserver(targetH
 const { isIntersecting: isAkadIntersecting } = useIntersectionObserver(targetAkad);
 const { isIntersecting: isResepsiIntersecting } = useIntersectionObserver(targetResepsi);
 
-const akadTitle = computed(() => props.invitation?.customTexts?.akadTitle || 'AKAD NIKAH');
-const akadTime = computed(() => props.invitation?.customTexts?.akadTime || '08:00 - 10:00 WIB');
-const akadAddress = computed(() => props.invitation?.customTexts?.akadAddress || 'KEDIAMAN MEMPELAI WANITA\nKp. Cikareumbi RT 04/04, Gang Aki Sana, Desa Cikidang, Kec. Lembang, Kab. Bandung Barat');
+const akadAddressTitle = computed(() => props.invitation?.customTexts?.akadAddressTitle || 'KEDIAMAN MEMPELAI WANITA');
+const akadAddressDetails = computed(() => props.invitation?.customTexts?.akadAddressDetails || 'Kp. Cikareumbi RT 04/04, Gang Aki Sana, Desa Cikidang, Kec. Lembang, Kab. Bandung Barat');
 
-const resepsiTitle = computed(() => props.invitation?.customTexts?.resepsiTitle || 'RESEPSI');
-const resepsiTime = computed(() => props.invitation?.customTexts?.resepsiTime || '10:00 - 18:00 WIB');
-const resepsiAddress = computed(() => props.invitation?.customTexts?.resepsiAddress || 'KEDIAMAN MEMPELAI WANITA\nKp. Cikareumbi RT 04/04, Gang Aki Sana, Desa Cikidang, Kec. Lembang, Kab. Bandung Barat');
+const resepsiAddressTitle = computed(() => props.invitation?.customTexts?.resepsiAddressTitle || 'KEDIAMAN MEMPELAI WANITA');
+const resepsiAddressDetails = computed(() => props.invitation?.customTexts?.resepsiAddressDetails || 'Kp. Cikareumbi RT 04/04, Gang Aki Sana, Desa Cikidang, Kec. Lembang, Kab. Bandung Barat');
 
-// Extract titles and details
-const extractTitle = (address: string) => {
-    const lines = address.split('\n');
-    return lines[0] || 'LOKASI ACARA';
-};
-const extractDetails = (address: string) => {
-    const lines = address.split('\n');
-    return lines.slice(1).join('\n') || '';
-};
-
-const akadAddressTitle = computed(() => extractTitle(akadAddress.value));
-const akadAddressDetails = computed(() => extractDetails(akadAddress.value));
-const resepsiAddressTitle = computed(() => extractTitle(resepsiAddress.value));
-const resepsiAddressDetails = computed(() => extractDetails(resepsiAddress.value));
+const akadMapUrl = computed(() => `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${akadAddressTitle.value} ${akadAddressDetails.value}`)}`);
+const resepsiMapUrl = computed(() => `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${resepsiAddressTitle.value} ${resepsiAddressDetails.value}`)}`);
 
 const eventDateObj = computed(() => {
     let dateStr = '2026-12-12';
@@ -46,14 +32,23 @@ const eventDateObj = computed(() => {
     return new Date(dateStr);
 });
 
+const formatDateParts = (dateStr: string | undefined, defaultDateStr: string) => {
+    const d = new Date(dateStr || defaultDateStr);
+    const days = ['MINGGU', 'SENIN', 'SELASA', 'RABU', 'KAMIS', 'JUMAT', 'SABTU'];
+    return {
+        day: d.getDate().toString().padStart(2, '0'),
+        month: (d.getMonth() + 1).toString().padStart(2, '0'),
+        year: d.getFullYear().toString().slice(-2),
+        fullYear: d.getFullYear().toString(),
+        hari: days[d.getDay()]
+    };
+};
+
+const akadDateObj = computed(() => formatDateParts(props.invitation?.customTexts?.akadDate, props.invitation?.customTexts?.eventDateRaw || '2026-12-12'));
+const resepsiDateObj = computed(() => formatDateParts(props.invitation?.customTexts?.resepsiDate, props.invitation?.customTexts?.eventDateRaw || '2026-12-12'));
+
 const day = computed(() => eventDateObj.value.getDate().toString().padStart(2, '0'));
 const month = computed(() => (eventDateObj.value.getMonth() + 1).toString().padStart(2, '0'));
-const fullYear = computed(() => eventDateObj.value.getFullYear().toString());
-const hari = computed(() => {
-    const days = ['MINGGU', 'SENIN', 'SELASA', 'RABU', 'KAMIS', 'JUMAT', 'SABTU'];
-    return days[eventDateObj.value.getDay()];
-});
-
 // Countdown Logic
 const targetDateStr = computed(() => {
     return `${eventDateObj.value.getFullYear()}-${(eventDateObj.value.getMonth()+1).toString().padStart(2,'0')}-${eventDateObj.value.getDate().toString().padStart(2,'0')}T08:00:00`;
@@ -145,12 +140,12 @@ onUnmounted(() => {
             ]"
           >
               <div class="absolute w-2 h-2 bg-white -left-[4.5px] top-2"></div>
-              <h3 class="text-4xl font-black uppercase tracking-tight text-white mb-6">{{ akadTitle }}</h3>
+              <h3 class="text-4xl font-black uppercase tracking-tight text-white mb-6">{{ props.invitation?.customTexts?.akadTitle || 'AKAD NIKAH' }}</h3>
               
               <div class="mb-6">
-                  <p class="text-xs font-bold tracking-[0.2em] uppercase text-zinc-500 mb-1">{{ hari }}</p>
-                  <p class="text-2xl font-light text-white tracking-widest mb-1">{{ day }}.{{ month }}.{{ fullYear }}</p>
-                  <p class="text-xs font-bold tracking-[0.2em] text-zinc-400 uppercase">{{ akadTime }}</p>
+                  <p class="text-xs font-bold tracking-[0.2em] uppercase text-zinc-500 mb-1">{{ akadDateObj.hari }}</p>
+                  <p class="text-2xl font-light text-white tracking-widest mb-1">{{ akadDateObj.day }}.{{ akadDateObj.month }}.{{ akadDateObj.fullYear }}</p>
+                  <p class="text-xs font-bold tracking-[0.2em] text-zinc-400 uppercase">{{ props.invitation?.customTexts?.akadTime || '08:00 - 10:00 WIB' }}</p>
               </div>
               
               <div class="mb-8">
@@ -158,7 +153,7 @@ onUnmounted(() => {
                   <p class="text-[11px] font-light text-zinc-500 leading-relaxed max-w-[280px]">{{ akadAddressDetails }}</p>
               </div>
               
-              <a href="#" class="inline-flex items-center justify-center pb-1 border-b border-zinc-600 text-white text-[10px] font-bold uppercase tracking-[0.2em] hover:border-white transition">
+              <a :href="akadMapUrl" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center pb-1 border-b border-zinc-600 text-white text-[10px] font-bold uppercase tracking-[0.2em] hover:border-white transition">
                   <i class="fa-solid fa-location-arrow mr-2"></i> Direction
               </a>
           </div>
@@ -172,12 +167,12 @@ onUnmounted(() => {
             ]"
           >
               <div class="absolute w-2 h-2 bg-white -left-[4.5px] top-2"></div>
-              <h3 class="text-4xl font-black uppercase tracking-tight text-white mb-6">{{ resepsiTitle }}</h3>
+              <h3 class="text-4xl font-black uppercase tracking-tight text-white mb-6">{{ props.invitation?.customTexts?.resepsiTitle || 'RESEPSI' }}</h3>
               
               <div class="mb-6">
-                  <p class="text-xs font-bold tracking-[0.2em] uppercase text-zinc-500 mb-1">{{ hari }}</p>
-                  <p class="text-2xl font-light text-white tracking-widest mb-1">{{ day }}.{{ month }}.{{ fullYear }}</p>
-                  <p class="text-xs font-bold tracking-[0.2em] text-zinc-400 uppercase">{{ resepsiTime }}</p>
+                  <p class="text-xs font-bold tracking-[0.2em] uppercase text-zinc-500 mb-1">{{ resepsiDateObj.hari }}</p>
+                  <p class="text-2xl font-light text-white tracking-widest mb-1">{{ resepsiDateObj.day }}.{{ resepsiDateObj.month }}.{{ resepsiDateObj.fullYear }}</p>
+                  <p class="text-xs font-bold tracking-[0.2em] text-zinc-400 uppercase">{{ props.invitation?.customTexts?.resepsiTime || '10:00 - 18:00 WIB' }}</p>
               </div>
               
               <div class="mb-8">
@@ -185,7 +180,7 @@ onUnmounted(() => {
                   <p class="text-[11px] font-light text-zinc-500 leading-relaxed max-w-[280px]">{{ resepsiAddressDetails }}</p>
               </div>
               
-              <a href="#" class="inline-flex items-center justify-center pb-1 border-b border-zinc-600 text-white text-[10px] font-bold uppercase tracking-[0.2em] hover:border-white transition">
+              <a :href="resepsiMapUrl" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center pb-1 border-b border-zinc-600 text-white text-[10px] font-bold uppercase tracking-[0.2em] hover:border-white transition">
                   <i class="fa-solid fa-location-arrow mr-2"></i> Direction
               </a>
           </div>

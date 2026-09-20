@@ -3,6 +3,7 @@ import { ref, onMounted, computed } from 'vue';
 import { useRoute } from 'vue-router';
 import { useInvitationStore } from '@/stores/useInvitationStore';
 import ImageUpload from '@/components/admin/ImageUpload.vue';
+import MusicManager from '@/components/invitation/MusicManager.vue';
 
 const route = useRoute();
 const invitationStore = useInvitationStore();
@@ -47,7 +48,8 @@ const saveChanges = async () => {
         customTexts: formTexts.value,
         customImages: formImages.value,
         stories: formStories.value,
-        gifts: formGifts.value
+        gifts: formGifts.value,
+        musicUrl: invitationStore.currentInvitation?.musicUrl
     });
     
     import('@/lib/supabase').then(async ({ supabase }) => {
@@ -278,16 +280,6 @@ const removeGift = (index: number) => {
                               <input v-model="formTexts.eventDateRaw" type="datetime-local" class="w-full px-4 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm font-medium font-mono text-zinc-900 focus:bg-white focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 outline-none transition-all">
                               <p class="text-[10px] text-zinc-400 mt-1">Pilih tanggal dan waktu pelaksanaan acara.</p>
                           </div>
-                          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                              <div class="space-y-1.5">
-                                  <label class="text-xs font-semibold uppercase tracking-wider text-zinc-500">Jam Akad</label>
-                                  <input v-model="formTexts.akadTime" type="text" placeholder="08:00 - 10:00 WIB" class="w-full px-4 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm font-medium text-zinc-900 focus:bg-white focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 outline-none transition-all">
-                              </div>
-                              <div class="space-y-1.5">
-                                  <label class="text-xs font-semibold uppercase tracking-wider text-zinc-500">Jam Resepsi</label>
-                                  <input v-model="formTexts.resepsiTime" type="text" placeholder="10:00 - Selesai" class="w-full px-4 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm font-medium text-zinc-900 focus:bg-white focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 outline-none transition-all">
-                              </div>
-                          </div>
                       </div>
                   </section>
                   
@@ -307,6 +299,16 @@ const removeGift = (index: number) => {
                           <!-- Akad -->
                           <div class="space-y-4 p-4 border border-zinc-100 bg-zinc-50/50 rounded-xl">
                               <h4 class="font-bold text-sm text-zinc-900">Lokasi Akad</h4>
+                              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                  <div class="space-y-1.5">
+                                      <label class="text-xs font-semibold uppercase tracking-wider text-zinc-500">Tanggal Akad</label>
+                                      <input v-model="formTexts.akadDate" type="date" class="w-full px-4 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm font-medium text-zinc-900 focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 outline-none transition-all">
+                                  </div>
+                                  <div class="space-y-1.5">
+                                      <label class="text-xs font-semibold uppercase tracking-wider text-zinc-500">Jam Akad</label>
+                                      <input v-model="formTexts.akadTime" type="text" placeholder="08:00 - 10:00 WIB" class="w-full px-4 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm font-medium text-zinc-900 focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 outline-none transition-all">
+                                  </div>
+                              </div>
                               <div class="space-y-1.5">
                                   <label class="text-xs font-semibold uppercase tracking-wider text-zinc-500">Nama Tempat / Gedung</label>
                                   <input v-model="formTexts.akadAddressTitle" type="text" class="w-full px-4 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm font-medium text-zinc-900 focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 outline-none transition-all">
@@ -315,15 +317,21 @@ const removeGift = (index: number) => {
                                   <label class="text-xs font-semibold uppercase tracking-wider text-zinc-500">Alamat Lengkap</label>
                                   <textarea v-model="formTexts.akadAddressDetails" rows="3" class="w-full px-4 py-3 bg-white border border-zinc-200 rounded-xl text-sm font-medium text-zinc-900 focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 outline-none transition-all resize-none"></textarea>
                               </div>
-                              <div class="space-y-1.5">
-                                  <label class="text-xs font-semibold uppercase tracking-wider text-zinc-500">URL Google Maps</label>
-                                  <input v-model="formTexts.akadMapUrl" type="text" class="w-full px-4 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm font-medium text-zinc-900 focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 outline-none transition-all">
-                              </div>
                           </div>
                           
                           <!-- Resepsi -->
                           <div class="space-y-4 p-4 border border-zinc-100 bg-zinc-50/50 rounded-xl">
                               <h4 class="font-bold text-sm text-zinc-900">Lokasi Resepsi</h4>
+                              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                  <div class="space-y-1.5">
+                                      <label class="text-xs font-semibold uppercase tracking-wider text-zinc-500">Tanggal Resepsi</label>
+                                      <input v-model="formTexts.resepsiDate" type="date" class="w-full px-4 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm font-medium text-zinc-900 focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 outline-none transition-all">
+                                  </div>
+                                  <div class="space-y-1.5">
+                                      <label class="text-xs font-semibold uppercase tracking-wider text-zinc-500">Jam Resepsi</label>
+                                      <input v-model="formTexts.resepsiTime" type="text" placeholder="10:00 - Selesai" class="w-full px-4 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm font-medium text-zinc-900 focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 outline-none transition-all">
+                                  </div>
+                              </div>
                               <div class="space-y-1.5">
                                   <label class="text-xs font-semibold uppercase tracking-wider text-zinc-500">Nama Tempat / Gedung</label>
                                   <input v-model="formTexts.resepsiAddressTitle" type="text" class="w-full px-4 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm font-medium text-zinc-900 focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 outline-none transition-all">
@@ -331,10 +339,6 @@ const removeGift = (index: number) => {
                               <div class="space-y-1.5">
                                   <label class="text-xs font-semibold uppercase tracking-wider text-zinc-500">Alamat Lengkap</label>
                                   <textarea v-model="formTexts.resepsiAddressDetails" rows="3" class="w-full px-4 py-3 bg-white border border-zinc-200 rounded-xl text-sm font-medium text-zinc-900 focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 outline-none transition-all resize-none"></textarea>
-                              </div>
-                              <div class="space-y-1.5">
-                                  <label class="text-xs font-semibold uppercase tracking-wider text-zinc-500">URL Google Maps</label>
-                                  <input v-model="formTexts.resepsiMapUrl" type="text" class="w-full px-4 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm font-medium text-zinc-900 focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 outline-none transition-all">
                               </div>
                           </div>
                       </div>
@@ -515,6 +519,7 @@ const removeGift = (index: number) => {
                       <div class="space-y-6">
                           <ImageUpload v-model="formImages.cover_bg" :subdomain="subdomain" label="Gambar Cover (Amplop Depan)" />
                           <ImageUpload v-model="formImages.hero_bg" :subdomain="subdomain" label="Gambar Hero (Bagian Utama dalam)" />
+                          <ImageUpload v-model="formImages.event_bg" :subdomain="subdomain" label="Gambar Acara (Save the Date)" />
                       </div>
                   </section>
 
@@ -554,7 +559,22 @@ const removeGift = (index: number) => {
                               <ImageUpload v-model="formImages.gallery_2" :subdomain="subdomain" label="Grid Foto 2 (Kecil)" />
                               <ImageUpload v-model="formImages.gallery_3" :subdomain="subdomain" label="Grid Foto 3 (Kecil)" />
                           </div>
+                          <ImageUpload v-model="formImages.gallery_4" :subdomain="subdomain" label="Grid Foto 4 (Bawah/Panjang)" />
                       </div>
+                  </section>
+                  
+                  <!-- Musik Latar -->
+                  <section v-if="invitationStore.currentInvitation" class="bg-white p-8 rounded-2xl border border-zinc-200 shadow-sm hover:shadow-md transition-shadow">
+                      <div class="flex items-center gap-3 mb-6">
+                          <div class="w-10 h-10 rounded-full bg-amber-50 text-amber-500 flex items-center justify-center">
+                              <i class="fa-solid fa-music"></i>
+                          </div>
+                          <div>
+                              <h3 class="text-lg font-bold text-zinc-900">Musik Latar</h3>
+                              <p class="text-xs text-zinc-500">Iringi tamu dengan lagu spesial.</p>
+                          </div>
+                      </div>
+                      <MusicManager :invitation="invitationStore.currentInvitation" />
                   </section>
               </div>
 

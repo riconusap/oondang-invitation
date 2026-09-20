@@ -13,28 +13,14 @@ const targetAkad = ref<HTMLElement | null>(null);
 const { isIntersecting: isHeaderIntersecting } = useIntersectionObserver(targetHeader);
 const { isIntersecting: isAkadIntersecting } = useIntersectionObserver(targetAkad);
 
-const akadTitle = computed(() => props.invitation?.customTexts?.akadTitle || 'Akad Nikah');
-const akadTime = computed(() => props.invitation?.customTexts?.akadTime || '08:00 - 10:00 WIB');
-const akadAddress = computed(() => props.invitation?.customTexts?.akadAddress || 'KEDIAMAN MEMPELAI WANITA\nKp. Cikareumbi RT 04/04, Gang Aki Sana, Desa Cikidang, Kec. Lembang, Kab. Bandung Barat');
+const akadAddressTitle = computed(() => props.invitation?.customTexts?.akadAddressTitle || 'KEDIAMAN MEMPELAI WANITA');
+const akadAddressDetails = computed(() => props.invitation?.customTexts?.akadAddressDetails || 'Kp. Cikareumbi RT 04/04, Gang Aki Sana, Desa Cikidang, Kec. Lembang, Kab. Bandung Barat');
 
-const resepsiTitle = computed(() => props.invitation?.customTexts?.resepsiTitle || 'Resepsi Pernikahan');
-const resepsiTime = computed(() => props.invitation?.customTexts?.resepsiTime || '10:00 - 18:00 WIB');
-const resepsiAddress = computed(() => props.invitation?.customTexts?.resepsiAddress || 'KEDIAMAN MEMPELAI WANITA\nKp. Cikareumbi RT 04/04, Gang Aki Sana, Desa Cikidang, Kec. Lembang, Kab. Bandung Barat');
+const resepsiAddressTitle = computed(() => props.invitation?.customTexts?.resepsiAddressTitle || 'KEDIAMAN MEMPELAI WANITA');
+const resepsiAddressDetails = computed(() => props.invitation?.customTexts?.resepsiAddressDetails || 'Kp. Cikareumbi RT 04/04, Gang Aki Sana, Desa Cikidang, Kec. Lembang, Kab. Bandung Barat');
 
-// Extract titles and details
-const extractTitle = (address: string) => {
-    const lines = address.split('\n');
-    return lines[0] || 'LOKASI ACARA';
-};
-const extractDetails = (address: string) => {
-    const lines = address.split('\n');
-    return lines.slice(1).join('\n') || '';
-};
-
-const akadAddressTitle = computed(() => extractTitle(akadAddress.value));
-const akadAddressDetails = computed(() => extractDetails(akadAddress.value));
-const resepsiAddressTitle = computed(() => extractTitle(resepsiAddress.value));
-const resepsiAddressDetails = computed(() => extractDetails(resepsiAddress.value));
+const akadMapUrl = computed(() => `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${akadAddressTitle.value} ${akadAddressDetails.value}`)}`);
+const resepsiMapUrl = computed(() => `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${resepsiAddressTitle.value} ${resepsiAddressDetails.value}`)}`);
 
 const eventDateObj = computed(() => {
     let dateStr = '2026-12-12';
@@ -44,14 +30,24 @@ const eventDateObj = computed(() => {
     return new Date(dateStr);
 });
 
+const formatDateParts = (dateStr: string | undefined, defaultDateStr: string) => {
+    const d = new Date(dateStr || defaultDateStr);
+    const days = ['MINGGU', 'SENIN', 'SELASA', 'RABU', 'KAMIS', 'JUMAT', 'SABTU'];
+    return {
+        day: d.getDate().toString().padStart(2, '0'),
+        month: (d.getMonth() + 1).toString().padStart(2, '0'),
+        year: d.getFullYear().toString().slice(-2),
+        fullYear: d.getFullYear().toString(),
+        hari: days[d.getDay()]
+    };
+};
+
+const akadDateObj = computed(() => formatDateParts(props.invitation?.customTexts?.akadDate, props.invitation?.customTexts?.eventDateRaw || '2026-12-12'));
+const resepsiDateObj = computed(() => formatDateParts(props.invitation?.customTexts?.resepsiDate, props.invitation?.customTexts?.eventDateRaw || '2026-12-12'));
+
 const day = computed(() => eventDateObj.value.getDate().toString().padStart(2, '0'));
 const month = computed(() => (eventDateObj.value.getMonth() + 1).toString().padStart(2, '0'));
 const year = computed(() => eventDateObj.value.getFullYear().toString().slice(-2));
-const fullYear = computed(() => eventDateObj.value.getFullYear().toString());
-const hari = computed(() => {
-    const days = ['MINGGU', 'SENIN', 'SELASA', 'RABU', 'KAMIS', 'JUMAT', 'SABTU'];
-    return days[eventDateObj.value.getDay()];
-});
 
 const eventBgImage = computed(() => {
     return props.invitation?.customImages?.event_bg || 'https://placehold.co/480x800/111111/4a4036?text=Event+Background';
@@ -171,11 +167,11 @@ onUnmounted(() => {
           >
               <!-- Akad -->
               <div class="text-center pt-8 mb-12">
-                  <h3 class="font-wedding-serif text-[2rem] leading-none italic text-sage-700 mb-6">{{ akadTitle }}</h3>
+                  <h3 class="font-wedding-serif text-[2rem] leading-none italic text-sage-700 mb-6">{{ props.invitation?.customTexts?.akadTitle || 'Akad Nikah' }}</h3>
                   <div class="mb-6">
-                     <p class="font-wedding-serif text-lg tracking-widest uppercase text-zinc-500 mb-2">{{ hari }}</p>
-                     <p class="font-wedding-serif text-[2rem] text-zinc-800 tracking-widest mb-2 leading-none">{{ day }} / {{ month }} / {{ fullYear }}</p>
-                     <p class="text-xs font-sans tracking-widest text-zinc-500 uppercase">{{ akadTime }}</p>
+                     <p class="font-wedding-serif text-lg tracking-widest uppercase text-zinc-500 mb-2">{{ akadDateObj.hari }}</p>
+                     <p class="font-wedding-serif text-[2rem] text-zinc-800 tracking-widest mb-2 leading-none">{{ akadDateObj.day }} / {{ akadDateObj.month }} / {{ akadDateObj.fullYear }}</p>
+                     <p class="text-xs font-sans tracking-widest text-zinc-500 uppercase">{{ props.invitation?.customTexts?.akadTime || '08:00 - 10:00 WIB' }}</p>
                   </div>
                   <div>
                      <p class="font-wedding-serif text-md tracking-widest uppercase text-zinc-800 mb-2">{{ akadAddressTitle }}</p>
@@ -192,11 +188,11 @@ onUnmounted(() => {
               
               <!-- Resepsi -->
               <div class="text-center mb-10">
-                  <h3 class="font-wedding-serif text-[2rem] leading-none italic text-sage-700 mb-6">{{ resepsiTitle }}</h3>
+                  <h3 class="font-wedding-serif text-[2rem] leading-none italic text-sage-700 mb-6">{{ props.invitation?.customTexts?.resepsiTitle || 'Resepsi Pernikahan' }}</h3>
                   <div class="mb-6">
-                     <p class="font-wedding-serif text-lg tracking-widest uppercase text-zinc-500 mb-2">{{ hari }}</p>
-                     <p class="font-wedding-serif text-[2rem] text-zinc-800 tracking-widest mb-2 leading-none">{{ day }} / {{ month }} / {{ fullYear }}</p>
-                     <p class="text-xs font-sans tracking-widest text-zinc-500 uppercase">{{ resepsiTime }}</p>
+                     <p class="font-wedding-serif text-lg tracking-widest uppercase text-zinc-500 mb-2">{{ resepsiDateObj.hari }}</p>
+                     <p class="font-wedding-serif text-[2rem] text-zinc-800 tracking-widest mb-2 leading-none">{{ resepsiDateObj.day }} / {{ resepsiDateObj.month }} / {{ resepsiDateObj.fullYear }}</p>
+                     <p class="text-xs font-sans tracking-widest text-zinc-500 uppercase">{{ props.invitation?.customTexts?.resepsiTime || '10:00 - 18:00 WIB' }}</p>
                   </div>
                   <div>
                      <p class="font-wedding-serif text-md tracking-widest uppercase text-zinc-800 mb-2">{{ resepsiAddressTitle }}</p>
@@ -204,9 +200,8 @@ onUnmounted(() => {
                   </div>
               </div>
               
-              <!-- Unified Map Button -->
               <div class="flex justify-center pb-4">
-                  <a href="#" class="inline-flex items-center justify-center px-8 py-3 bg-sage-700 text-white text-xs font-bold uppercase tracking-wider hover:bg-sage-800 transition rounded-full shadow-lg">
+                  <a :href="resepsiMapUrl" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center px-8 py-3 bg-sage-700 text-white text-xs font-bold uppercase tracking-wider hover:bg-sage-800 transition rounded-full shadow-lg">
                       <i class="fa-solid fa-map-location-dot mr-2"></i> Buka Google Map
                   </a>
               </div>

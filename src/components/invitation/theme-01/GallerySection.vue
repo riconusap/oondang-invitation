@@ -54,8 +54,8 @@ const gallery4 = computed(() => props.invitation?.customImages?.gallery_4 || 'ht
               <div class="h-40 rounded-lg overflow-hidden shadow">
                   <img :src="gallery3" alt="Gallery 3" class="w-full h-full object-cover">
               </div>
-              <div class="h-40 rounded-lg overflow-hidden shadow col-span-2">
-                  <img :src="gallery4" alt="Gallery 4" class="w-full h-full object-cover">
+              <div class="rounded-lg overflow-hidden shadow col-span-2">
+                  <img :src="gallery4" alt="Gallery 4" class="w-full h-auto">
               </div>
           </div>
       </div>

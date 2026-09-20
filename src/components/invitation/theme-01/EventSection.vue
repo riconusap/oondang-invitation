@@ -15,28 +15,14 @@ const { isIntersecting: isHeaderIntersecting } = useIntersectionObserver(targetH
 const { isIntersecting: isAkadIntersecting } = useIntersectionObserver(targetAkad);
 const { isIntersecting: isResepsiIntersecting } = useIntersectionObserver(targetResepsi);
 
-const akadTitle = computed(() => props.invitation?.customTexts?.akadTitle || 'Akad Nikah');
-const akadTime = computed(() => props.invitation?.customTexts?.akadTime || '08:00 - 10:00 WIB');
-const akadAddress = computed(() => props.invitation?.customTexts?.akadAddress || 'KEDIAMAN MEMPELAI WANITA\nKp. Cikareumbi RT 04/04, Gang Aki Sana, Desa Cikidang, Kec. Lembang, Kab. Bandung Barat');
+const akadAddressTitle = computed(() => props.invitation?.customTexts?.akadAddressTitle || 'KEDIAMAN MEMPELAI WANITA');
+const akadAddressDetails = computed(() => props.invitation?.customTexts?.akadAddressDetails || 'Kp. Cikareumbi RT 04/04, Gang Aki Sana, Desa Cikidang, Kec. Lembang, Kab. Bandung Barat');
 
-const resepsiTitle = computed(() => props.invitation?.customTexts?.resepsiTitle || 'Resepsi Pernikahan');
-const resepsiTime = computed(() => props.invitation?.customTexts?.resepsiTime || '10:00 - 18:00 WIB');
-const resepsiAddress = computed(() => props.invitation?.customTexts?.resepsiAddress || 'KEDIAMAN MEMPELAI WANITA\nKp. Cikareumbi RT 04/04, Gang Aki Sana, Desa Cikidang, Kec. Lembang, Kab. Bandung Barat');
+const resepsiAddressTitle = computed(() => props.invitation?.customTexts?.resepsiAddressTitle || 'KEDIAMAN MEMPELAI WANITA');
+const resepsiAddressDetails = computed(() => props.invitation?.customTexts?.resepsiAddressDetails || 'Kp. Cikareumbi RT 04/04, Gang Aki Sana, Desa Cikidang, Kec. Lembang, Kab. Bandung Barat');
 
-// Extract titles and details
-const extractTitle = (address: string) => {
-    const lines = address.split('\n');
-    return lines[0] || 'LOKASI ACARA';
-};
-const extractDetails = (address: string) => {
-    const lines = address.split('\n');
-    return lines.slice(1).join('\n') || '';
-};
-
-const akadAddressTitle = computed(() => extractTitle(akadAddress.value));
-const akadAddressDetails = computed(() => extractDetails(akadAddress.value));
-const resepsiAddressTitle = computed(() => extractTitle(resepsiAddress.value));
-const resepsiAddressDetails = computed(() => extractDetails(resepsiAddress.value));
+const akadMapUrl = computed(() => `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${akadAddressTitle.value} ${akadAddressDetails.value}`)}`);
+const resepsiMapUrl = computed(() => `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${resepsiAddressTitle.value} ${resepsiAddressDetails.value}`)}`);
 
 const eventDateObj = computed(() => {
     let dateStr = '2026-12-12';
@@ -46,14 +32,24 @@ const eventDateObj = computed(() => {
     return new Date(dateStr);
 });
 
+const formatDateParts = (dateStr: string | undefined, defaultDateStr: string) => {
+    const d = new Date(dateStr || defaultDateStr);
+    const days = ['MINGGU', 'SENIN', 'SELASA', 'RABU', 'KAMIS', 'JUMAT', 'SABTU'];
+    return {
+        day: d.getDate().toString().padStart(2, '0'),
+        month: (d.getMonth() + 1).toString().padStart(2, '0'),
+        year: d.getFullYear().toString().slice(-2),
+        fullYear: d.getFullYear().toString(),
+        hari: days[d.getDay()]
+    };
+};
+
+const akadDateObj = computed(() => formatDateParts(props.invitation?.customTexts?.akadDate, props.invitation?.customTexts?.eventDateRaw || '2026-12-12'));
+const resepsiDateObj = computed(() => formatDateParts(props.invitation?.customTexts?.resepsiDate, props.invitation?.customTexts?.eventDateRaw || '2026-12-12'));
+
 const day = computed(() => eventDateObj.value.getDate().toString().padStart(2, '0'));
 const month = computed(() => (eventDateObj.value.getMonth() + 1).toString().padStart(2, '0'));
 const year = computed(() => eventDateObj.value.getFullYear().toString().slice(-2));
-const fullYear = computed(() => eventDateObj.value.getFullYear().toString());
-const hari = computed(() => {
-    const days = ['MINGGU', 'SENIN', 'SELASA', 'RABU', 'KAMIS', 'JUMAT', 'SABTU'];
-    return days[eventDateObj.value.getDay()];
-});
 
 const eventBgImage = computed(() => {
     return props.invitation?.customImages?.event_bg || 'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=800&q=80';
@@ -173,12 +169,12 @@ onUnmounted(() => {
                     isAkadIntersecting ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'
                 ]"
               >
-                  <h3 class="font-wedding-serif text-[2.5rem] leading-none italic text-white mb-8 text-center">{{ akadTitle }}</h3>
+                  <h3 class="font-wedding-serif text-[2.5rem] leading-none italic text-white mb-8 text-center">{{ props.invitation?.customTexts?.akadTitle || 'Akad Nikah' }}</h3>
                   
                   <div class="mb-8 text-center border-b border-white/20 pb-8">
-                     <p class="font-wedding-serif text-lg tracking-widest uppercase text-zinc-300 mb-2">{{ hari }}</p>
-                     <p class="font-wedding-serif text-[2rem] text-white tracking-widest mb-3 leading-none">{{ day }} / {{ month }} / {{ fullYear }}</p>
-                     <p class="text-xs font-sans tracking-widest text-zinc-400 uppercase">{{ akadTime }}</p>
+                     <p class="font-wedding-serif text-lg tracking-widest uppercase text-zinc-300 mb-2">{{ akadDateObj.hari }}</p>
+                     <p class="font-wedding-serif text-[2rem] text-white tracking-widest mb-3 leading-none">{{ akadDateObj.day }} / {{ akadDateObj.month }} / {{ akadDateObj.fullYear }}</p>
+                     <p class="text-xs font-sans tracking-widest text-zinc-400 uppercase">{{ props.invitation?.customTexts?.akadTime || '08:00 - 10:00 WIB' }}</p>
                   </div>
                   
                   <div class="mb-8 text-center">
@@ -188,7 +184,7 @@ onUnmounted(() => {
                   </div>
                   
                   <div class="flex justify-center">
-                      <a href="#" class="inline-flex items-center justify-center px-8 py-3 bg-white text-black text-xs font-bold uppercase tracking-wider hover:bg-zinc-200 transition rounded-full">
+                      <a :href="akadMapUrl" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center px-8 py-3 bg-white text-black text-xs font-bold uppercase tracking-wider hover:bg-zinc-200 transition rounded-full">
                           <i class="fa-solid fa-map-location-dot mr-2"></i> Google Map
                       </a>
                   </div>
@@ -202,12 +198,12 @@ onUnmounted(() => {
                     isResepsiIntersecting ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'
                 ]"
               >
-                  <h3 class="font-wedding-serif text-[2.5rem] leading-none italic text-white mb-8 text-center">{{ resepsiTitle }}</h3>
+                  <h3 class="font-wedding-serif text-[2.5rem] leading-none italic text-white mb-8 text-center">{{ props.invitation?.customTexts?.resepsiTitle || 'Resepsi Pernikahan' }}</h3>
                   
                   <div class="mb-8 text-center border-b border-white/20 pb-8">
-                     <p class="font-wedding-serif text-lg tracking-widest uppercase text-zinc-300 mb-2">{{ hari }}</p>
-                     <p class="font-wedding-serif text-[2rem] text-white tracking-widest mb-3 leading-none">{{ day }} / {{ month }} / {{ fullYear }}</p>
-                     <p class="text-xs font-sans tracking-widest text-zinc-400 uppercase">{{ resepsiTime }}</p>
+                     <p class="font-wedding-serif text-lg tracking-widest uppercase text-zinc-300 mb-2">{{ resepsiDateObj.hari }}</p>
+                     <p class="font-wedding-serif text-[2rem] text-white tracking-widest mb-3 leading-none">{{ resepsiDateObj.day }} / {{ resepsiDateObj.month }} / {{ resepsiDateObj.fullYear }}</p>
+                     <p class="text-xs font-sans tracking-widest text-zinc-400 uppercase">{{ props.invitation?.customTexts?.resepsiTime || '10:00 - 18:00 WIB' }}</p>
                   </div>
                   
                   <div class="mb-8 text-center">
@@ -217,7 +213,7 @@ onUnmounted(() => {
                   </div>
                   
                   <div class="flex justify-center">
-                      <a href="#" class="inline-flex items-center justify-center px-8 py-3 bg-white text-black text-xs font-bold uppercase tracking-wider hover:bg-zinc-200 transition rounded-full">
+                      <a :href="resepsiMapUrl" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center px-8 py-3 bg-white text-black text-xs font-bold uppercase tracking-wider hover:bg-zinc-200 transition rounded-full">
                           <i class="fa-solid fa-map-location-dot mr-2"></i> Google Map
                       </a>
                   </div>

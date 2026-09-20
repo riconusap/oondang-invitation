@@ -86,6 +86,7 @@ export const useInvitationStore = defineStore('invitation', () => {
           stories: data.stories || [],
           gifts: data.gifts || [],
           galleryUrls: data.galleryUrls || [],
+          musicUrl: data.musicUrl,
           createdAt: data.createdAt || new Date().toISOString(),
           updatedAt: data.updatedAt || new Date().toISOString()
         };
@@ -120,8 +121,9 @@ export const useInvitationStore = defineStore('invitation', () => {
         wishesSubtitle: "Berikan doa dan ucapan terbaik untuk kami"
       },
       customImages: {
-        cover_bg: 'https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=2000&auto=format&fit=crop',
+        cover_bg: 'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?q=80&w=2000&auto=format&fit=crop',
         hero_bg: 'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?q=80&w=2000&auto=format&fit=crop',
+        event_bg: 'https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=2000&auto=format&fit=crop',
         groom_photo: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=800&auto=format&fit=crop',
         bride_photo: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=800&auto=format&fit=crop'
       },
@@ -204,15 +206,15 @@ export const useInvitationStore = defineStore('invitation', () => {
             heroQuoteAuthor: "- Dave Meurer -",
             profileIntroQuote: "Maha Suci Allah yang telah menciptakan makhluk-Nya berpasang-pasangan. Ya Allah semoga ridho-Mu tercurah mengiringi pernikahan kami:",
             akadTitle: "Akad Nikah",
+            akadDate: "2026-06-13",
             akadTime: "08:00 - 10:00 WIB",
             akadAddressTitle: "KUA Kecamatan Setempat",
             akadAddressDetails: "Jl. Pernikahan No. 123, Kota Bahagia, Provinsi Sejahtera 40123",
-            akadMapUrl: "https://maps.google.com",
             resepsiTitle: "Resepsi",
+            resepsiDate: "2026-06-13",
             resepsiTime: "11:00 - Selesai",
             resepsiAddressTitle: "Gedung Serbaguna",
             resepsiAddressDetails: "Jl. Kebahagiaan No. 456, Kota Bahagia, Provinsi Sejahtera 40123",
-            resepsiMapUrl: "https://maps.google.com",
             galleryTitle: "Our Gallery",
             gallerySubtitle: "Momen bahagia yang kami abadikan",
             loveStoryTitle: "Our Love Story",
@@ -223,13 +225,15 @@ export const useInvitationStore = defineStore('invitation', () => {
             wishesSubtitle: "Berikan doa dan ucapan terbaik untuk kami"
           },
           customImages: {
-            cover_bg: 'https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=2000&auto=format&fit=crop',
+            cover_bg: 'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?q=80&w=2000&auto=format&fit=crop',
             hero_bg: 'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?q=80&w=2000&auto=format&fit=crop',
+            event_bg: 'https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=2000&auto=format&fit=crop',
             groom_photo: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=800&auto=format&fit=crop',
             bride_photo: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=800&auto=format&fit=crop',
             gallery_1: 'https://images.unsplash.com/photo-1519225421980-715cb0215aed?q=80&w=800&auto=format&fit=crop',
             gallery_2: 'https://images.unsplash.com/photo-1606800052052-a08af7148866?q=80&w=800&auto=format&fit=crop',
-            gallery_3: 'https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?q=80&w=800&auto=format&fit=crop'
+            gallery_3: 'https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?q=80&w=800&auto=format&fit=crop',
+            gallery_4: 'https://images.unsplash.com/photo-1520854221256-17451fc3369b?q=80&w=800&auto=format&fit=crop'
           },
           stories: [
             { id: '1', title: 'Pertama Bertemu', date: 'Januari 2020', text: 'Pertemuan pertama kami di sebuah kafe kecil di sudut kota.' },

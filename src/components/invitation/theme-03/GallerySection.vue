@@ -56,8 +56,8 @@ const gallery4 = computed(() => props.invitation?.customImages?.gallery_4 || 'ht
                   </div>
               </div>
           </div>
-          <div class="w-full h-40 grayscale hover:grayscale-0 transition-all duration-1000">
-              <img :src="gallery4" alt="Gallery 4" class="w-full h-full object-cover">
+          <div class="w-full grayscale hover:grayscale-0 transition-all duration-1000">
+              <img :src="gallery4" alt="Gallery 4" class="w-full h-auto">
           </div>
       </div>
   </section>

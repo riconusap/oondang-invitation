@@ -144,7 +144,7 @@ onUnmounted(() => {
                       <div class="w-8 h-0.5 bg-white rotate-45"></div>
                   </div>
               </button>
-              <audio ref="audioRef" :src="invitation.musicUrl" loop preload="auto" class="hidden"></audio>
+              <audio ref="audioRef" :src="invitation.musicUrl" loop preload="auto" autoplay @play="isPlaying = true" @pause="isPlaying = false" class="hidden"></audio>
           </div>
           
           <ToastNotification :show="showToast" :message="toastMessage" />

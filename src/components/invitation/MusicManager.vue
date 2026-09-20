@@ -46,7 +46,7 @@ const handleFileSelect = async (event: Event) => {
     const fileName = `invitations/${props.invitation.subdomain}/music_${Date.now()}.${fileExt}`;
     
     const { error } = await supabase.storage
-      .from('oondang-id')
+      .from('invitations-media')
       .upload(fileName, file, {
         cacheControl: '3600',
         upsert: false
@@ -58,7 +58,7 @@ const handleFileSelect = async (event: Event) => {
     
     // Get public URL
     const { data: publicUrlData } = supabase.storage
-      .from('oondang-id')
+      .from('invitations-media')
       .getPublicUrl(fileName);
       
     const downloadUrl = publicUrlData.publicUrl;
