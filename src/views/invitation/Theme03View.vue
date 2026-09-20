@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, computed } from 'vue';
 import { useRoute } from 'vue-router';
+import type { Invitation } from '@/types/invitation';
+import { getFormattedDate } from '@/lib/utils';
 import { useInvitationStore } from '@/stores/useInvitationStore';
 
 import CoverOverlay from '@/components/invitation/theme-03/CoverOverlay.vue';
@@ -95,7 +97,7 @@ onUnmounted(() => {
                   {{ invitation?.customTexts?.groomName || 'DENI' }}<br/><span class="text-4xl text-zinc-500 font-light">&</span><br/>{{ invitation?.customTexts?.brideName || 'SOFIAH' }}
               </h1>
               <div class="w-16 h-px bg-white/30 mx-auto mb-6"></div>
-              <p class="text-sm xl:text-base font-light tracking-[0.2em] text-zinc-300 uppercase">{{ invitation?.customTexts?.eventDateStr || 'SABTU, 13 JUNI 2026' }}</p>
+              <p class="text-sm xl:text-base font-light tracking-[0.2em] text-zinc-300 uppercase">{{ getFormattedDate(invitation?.customTexts, 'SABTU, 13 JUNI 2026') }}</p>
           </div>
       </div>
 

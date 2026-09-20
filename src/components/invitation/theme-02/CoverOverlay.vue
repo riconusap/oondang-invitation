@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
 import type { Invitation } from '@/types/invitation';
+import { getFormattedDate } from '@/lib/utils';
 
 const props = defineProps<{
   guestName?: string;
@@ -19,13 +20,13 @@ const coverImage = computed(() => {
   return props.invitation?.customImages?.cover_bg || 'https://placehold.co/480x800/111111/4a4036?text=Cover+Photo';
 });
 
-const subtitle = computed(() => props.invitation?.customTexts?.coverSubtitle || 'The Wedding of');
+const subtitle = computed(() => props.invitation?.customTexts?.coverSubtitle || 'THE WEDDING OF');
 const title = computed(() => {
   const groom = props.invitation?.customTexts?.groomName || 'DENI';
   const bride = props.invitation?.customTexts?.brideName || 'SOFIAH';
   return `${groom} & ${bride}`.toUpperCase();
 });
-const dateStr = computed(() => props.invitation?.customTexts?.eventDateStr || 'Sabtu, 13 Juni 2026');
+const dateStr = computed(() => getFormattedDate(props.invitation?.customTexts, 'Sabtu, 13 Juni 2026'));
 const salutation = computed(() => props.invitation?.customTexts?.coverSalutation || 'Kepada Yth. Bapak/Ibu/Saudara/i');
 </script>
 

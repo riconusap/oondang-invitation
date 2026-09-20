@@ -19,13 +19,15 @@ const coverImage = computed(() => {
   return props.invitation?.customImages?.cover_bg || 'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&w=800&q=80';
 });
 
+import { getFormattedDate } from '@/lib/utils';
+
 const subtitle = computed(() => props.invitation?.customTexts?.coverSubtitle || 'The Wedding of');
 const title = computed(() => {
   const groom = props.invitation?.customTexts?.groomName || 'DENI';
   const bride = props.invitation?.customTexts?.brideName || 'SOFIAH';
   return `${groom} & ${bride}`.toUpperCase();
 });
-const dateStr = computed(() => props.invitation?.customTexts?.eventDateStr || 'Sabtu, 13 Juni 2026');
+const dateStr = computed(() => getFormattedDate(props.invitation?.customTexts, 'Sabtu, 13 Juni 2026'));
 const salutation = computed(() => props.invitation?.customTexts?.coverSalutation || 'Kepada Yth. Bapak/Ibu/Saudara/i');
 </script>
 
