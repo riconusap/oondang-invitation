@@ -57,7 +57,10 @@ const replaceMetaTags = (html, metadata) => {
 
 app.use(express.static(distPath, { index: false }));
 
-app.get('*', async (req, res) => {
+app.use(async (req, res, next) => {
+  if (req.method !== 'GET') {
+    return next();
+  }
   let htmlToSend = baseHtml;
   
   try {
