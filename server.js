@@ -76,7 +76,7 @@ app.use(async (req, res, next) => {
       const { data, error } = await supabase
         .from('invitations')
         .select('customTexts, customImages')
-        .eq('id', subdomain)
+        .eq('subdomain', subdomain)
         .single();
         
       if (!error && data) {
