@@ -28,6 +28,7 @@ const slots: ImageSlot[] = [
   { key: 'gallery_2', label: 'Galeri 2', description: 'Foto tambahan galeri', ratio: '1:1 (Persegi)' },
   { key: 'gallery_3', label: 'Galeri 3', description: 'Foto tambahan galeri', ratio: '1:1 (Persegi)' },
   { key: 'gallery_4', label: 'Galeri 4', description: 'Foto mendatar galeri', ratio: '2:1 (Lanskap)' },
+  { key: 'gift_qris', label: 'QRIS Hadiah', description: 'Gambar barcode QRIS', ratio: 'Bebas' },
 ];
 
 const customImages = computed(() => props.invitation.customImages || {});

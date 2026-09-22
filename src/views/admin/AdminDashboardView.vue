@@ -22,6 +22,7 @@ const formImages = ref<Record<string, string>>({});
 const formThemeId = ref('theme-01');
 const formStories = ref<any[]>([]);
 const formGifts = ref<any[]>([]);
+const formEvents = ref<any[]>([]);
 
 const previewUrl = computed(() => {
     return `/?test_subdomain=${subdomain}`;
@@ -35,6 +36,7 @@ onMounted(async () => {
         formThemeId.value = data.themeId;
         formStories.value = Array.isArray(data.stories) ? [...data.stories] : [];
         formGifts.value = Array.isArray(data.gifts) ? [...data.gifts] : [];
+        formEvents.value = Array.isArray(data.events) ? [...data.events] : [];
     }
     isLoading.value = false;
 });
@@ -49,6 +51,7 @@ const saveChanges = async () => {
         customImages: formImages.value,
         stories: formStories.value,
         gifts: formGifts.value,
+        events: formEvents.value,
         musicUrl: invitationStore.currentInvitation?.musicUrl
     });
     
@@ -77,6 +80,14 @@ const addGift = () => {
 
 const removeGift = (index: number) => {
     formGifts.value.splice(index, 1);
+};
+
+const addEvent = () => {
+    formEvents.value.push({ id: Date.now().toString(), title: '', date: '', time: '', addressTitle: '', addressDetails: '' });
+};
+
+const removeEvent = (index: number) => {
+    formEvents.value.splice(index, 1);
 };
 
 </script>
@@ -283,62 +294,57 @@ const removeGift = (index: number) => {
                       </div>
                   </section>
                   
-                  <!-- Card: Lokasi -->
+                  <!-- Card: Lokasi & Daftar Acara -->
                   <section class="bg-white p-8 rounded-2xl border border-zinc-200 shadow-sm hover:shadow-md transition-shadow">
-                      <div class="flex items-center gap-3 mb-6">
-                          <div class="w-10 h-10 rounded-full bg-rose-50 text-rose-500 flex items-center justify-center">
-                              <i class="fa-solid fa-map-location-dot"></i>
+                      <div class="flex items-center justify-between mb-6">
+                          <div class="flex items-center gap-3">
+                              <div class="w-10 h-10 rounded-full bg-rose-50 text-rose-500 flex items-center justify-center">
+                                  <i class="fa-solid fa-map-location-dot"></i>
+                              </div>
+                              <div>
+                                  <h3 class="text-lg font-bold text-zinc-900">Lokasi & Daftar Acara</h3>
+                                  <p class="text-xs text-zinc-500">Kelola rincian acara (Akad, Resepsi, dll).</p>
+                              </div>
                           </div>
-                          <div>
-                              <h3 class="text-lg font-bold text-zinc-900">Lokasi Penyelenggaraan</h3>
-                              <p class="text-xs text-zinc-500">Alamat lengkap acara.</p>
-                          </div>
+                          <button @click="addEvent" class="px-4 py-2 text-xs font-bold bg-zinc-900 text-white rounded-lg hover:bg-zinc-800 transition">
+                              <i class="fa-solid fa-plus mr-1"></i> Tambah Acara
+                          </button>
                       </div>
                       
-                      <div class="space-y-6">
-                          <!-- Akad -->
-                          <div class="space-y-4 p-4 border border-zinc-100 bg-zinc-50/50 rounded-xl">
-                              <h4 class="font-bold text-sm text-zinc-900">Lokasi Akad</h4>
+                      <div v-if="formEvents.length === 0" class="text-center py-8 text-zinc-400 text-sm italic">
+                          Belum ada acara yang ditambahkan.
+                      </div>
+
+                      <div v-else class="space-y-6">
+                          <div v-for="(event, index) in formEvents" :key="event.id" class="space-y-4 p-4 border border-zinc-100 bg-zinc-50/50 rounded-xl relative group">
+                              <button @click="removeEvent(index)" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-red-50 text-red-500 flex items-center justify-center hover:bg-red-100 transition opacity-0 group-hover:opacity-100">
+                                  <i class="fa-solid fa-trash text-xs"></i>
+                              </button>
+
+                              <h4 class="font-bold text-sm text-zinc-900 pr-10">Acara {{ index + 1 }}</h4>
                               <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                   <div class="space-y-1.5">
-                                      <label class="text-xs font-semibold uppercase tracking-wider text-zinc-500">Tanggal Akad</label>
-                                      <input v-model="formTexts.akadDate" type="date" class="w-full px-4 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm font-medium text-zinc-900 focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 outline-none transition-all">
+                                      <label class="text-xs font-semibold uppercase tracking-wider text-zinc-500">Judul Acara</label>
+                                      <input v-model="event.title" type="text" placeholder="Cth: Akad Nikah" class="w-full px-4 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm font-medium text-zinc-900 focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 outline-none transition-all">
+                                  </div>
+                              </div>
+                              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                  <div class="space-y-1.5">
+                                      <label class="text-xs font-semibold uppercase tracking-wider text-zinc-500">Tanggal Acara</label>
+                                      <input v-model="event.date" type="date" class="w-full px-4 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm font-medium text-zinc-900 focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 outline-none transition-all">
                                   </div>
                                   <div class="space-y-1.5">
-                                      <label class="text-xs font-semibold uppercase tracking-wider text-zinc-500">Jam Akad</label>
-                                      <input v-model="formTexts.akadTime" type="text" placeholder="08:00 - 10:00 WIB" class="w-full px-4 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm font-medium text-zinc-900 focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 outline-none transition-all">
+                                      <label class="text-xs font-semibold uppercase tracking-wider text-zinc-500">Jam Acara</label>
+                                      <input v-model="event.time" type="text" placeholder="08:00 - 10:00 WIB" class="w-full px-4 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm font-medium text-zinc-900 focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 outline-none transition-all">
                                   </div>
                               </div>
                               <div class="space-y-1.5">
                                   <label class="text-xs font-semibold uppercase tracking-wider text-zinc-500">Nama Tempat / Gedung</label>
-                                  <input v-model="formTexts.akadAddressTitle" type="text" class="w-full px-4 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm font-medium text-zinc-900 focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 outline-none transition-all">
+                                  <input v-model="event.addressTitle" type="text" placeholder="KUA Kecamatan Setempat" class="w-full px-4 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm font-medium text-zinc-900 focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 outline-none transition-all">
                               </div>
                               <div class="space-y-1.5">
                                   <label class="text-xs font-semibold uppercase tracking-wider text-zinc-500">Alamat Lengkap</label>
-                                  <textarea v-model="formTexts.akadAddressDetails" rows="3" class="w-full px-4 py-3 bg-white border border-zinc-200 rounded-xl text-sm font-medium text-zinc-900 focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 outline-none transition-all resize-none"></textarea>
-                              </div>
-                          </div>
-                          
-                          <!-- Resepsi -->
-                          <div class="space-y-4 p-4 border border-zinc-100 bg-zinc-50/50 rounded-xl">
-                              <h4 class="font-bold text-sm text-zinc-900">Lokasi Resepsi</h4>
-                              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                  <div class="space-y-1.5">
-                                      <label class="text-xs font-semibold uppercase tracking-wider text-zinc-500">Tanggal Resepsi</label>
-                                      <input v-model="formTexts.resepsiDate" type="date" class="w-full px-4 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm font-medium text-zinc-900 focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 outline-none transition-all">
-                                  </div>
-                                  <div class="space-y-1.5">
-                                      <label class="text-xs font-semibold uppercase tracking-wider text-zinc-500">Jam Resepsi</label>
-                                      <input v-model="formTexts.resepsiTime" type="text" placeholder="10:00 - Selesai" class="w-full px-4 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm font-medium text-zinc-900 focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 outline-none transition-all">
-                                  </div>
-                              </div>
-                              <div class="space-y-1.5">
-                                  <label class="text-xs font-semibold uppercase tracking-wider text-zinc-500">Nama Tempat / Gedung</label>
-                                  <input v-model="formTexts.resepsiAddressTitle" type="text" class="w-full px-4 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm font-medium text-zinc-900 focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 outline-none transition-all">
-                              </div>
-                              <div class="space-y-1.5">
-                                  <label class="text-xs font-semibold uppercase tracking-wider text-zinc-500">Alamat Lengkap</label>
-                                  <textarea v-model="formTexts.resepsiAddressDetails" rows="3" class="w-full px-4 py-3 bg-white border border-zinc-200 rounded-xl text-sm font-medium text-zinc-900 focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 outline-none transition-all resize-none"></textarea>
+                                  <textarea v-model="event.addressDetails" rows="3" class="w-full px-4 py-3 bg-white border border-zinc-200 rounded-xl text-sm font-medium text-zinc-900 focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 outline-none transition-all resize-none"></textarea>
                               </div>
                           </div>
                       </div>
@@ -488,6 +494,12 @@ const removeGift = (index: number) => {
                                   <input v-model="gift.accountName" type="text" class="w-full px-4 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm font-medium text-zinc-900 focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 outline-none transition-all">
                               </div>
                           </div>
+                      </div>
+                      
+                      <div class="mt-8 pt-6 border-t border-zinc-100">
+                          <h4 class="text-sm font-bold text-zinc-900 mb-4">Barcode QRIS (Opsional)</h4>
+                          <p class="text-[10px] text-zinc-500 mb-4">Jika Anda memiliki barcode QRIS, silakan unggah gambar di sini.</p>
+                          <ImageUpload v-model="formImages.gift_qris" :subdomain="subdomain" label="Unggah QRIS" />
                       </div>
                   </section>
               </div>

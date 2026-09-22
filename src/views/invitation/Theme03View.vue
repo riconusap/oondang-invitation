@@ -97,7 +97,7 @@ onUnmounted(() => {
                   {{ invitation?.customTexts?.groomName || 'DENI' }}<br/><span class="text-4xl text-zinc-500 font-light">&</span><br/>{{ invitation?.customTexts?.brideName || 'SOFIAH' }}
               </h1>
               <div class="w-16 h-px bg-white/30 mx-auto mb-6"></div>
-              <p class="text-sm xl:text-base font-light tracking-[0.2em] text-zinc-300 uppercase">{{ getFormattedDate(invitation?.customTexts, 'SABTU, 13 JUNI 2026') }}</p>
+              <p class="text-sm xl:text-base font-light tracking-[0.2em] text-zinc-300 uppercase">{{ getFormattedDate(invitation, 'SABTU, 13 JUNI 2026') }}</p>
           </div>
       </div>
 

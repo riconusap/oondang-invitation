@@ -15,9 +15,11 @@ const heroQuote = computed(() => props.invitation?.customTexts?.heroQuote || "A 
 const heroQuoteAuthor = computed(() => props.invitation?.customTexts?.heroQuoteAuthor || "- Dave Meurer -");
 
 const eventDateObj = computed(() => {
-    let dateStr = '2026-12-31';
+    let dateStr = '2026-12-12';
     if (props.invitation?.customTexts?.eventDateRaw) {
         dateStr = props.invitation.customTexts.eventDateRaw;
+    } else if (props.invitation?.events && props.invitation.events.length > 0) {
+        dateStr = props.invitation.events[0].date;
     }
     return new Date(dateStr);
 });

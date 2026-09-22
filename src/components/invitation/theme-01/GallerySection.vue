@@ -43,19 +43,19 @@ const gallery4 = computed(() => props.invitation?.customImages?.gallery_4 || 'ht
         ]"
       >
           <!-- Main Gallery Image -->
-          <div class="w-full h-96 rounded-t-full overflow-hidden mb-4 shadow-lg border-4 border-white">
-              <img :src="gallery1" alt="Gallery 1" class="w-full h-full object-cover">
+          <div class="w-full rounded-t-[10rem] overflow-hidden mb-4 shadow-lg border-4 border-white flex justify-center items-center bg-zinc-100">
+              <img :src="gallery1" alt="Gallery 1" class="w-full h-auto object-contain">
           </div>
           <!-- Grid Images -->
           <div class="grid grid-cols-2 gap-4">
-              <div class="h-40 rounded-lg overflow-hidden shadow">
-                  <img :src="gallery2" alt="Gallery 2" class="w-full h-full object-cover">
+              <div class="rounded-lg overflow-hidden shadow flex justify-center items-center bg-zinc-100">
+                  <img :src="gallery2" alt="Gallery 2" class="w-full h-auto object-contain">
               </div>
-              <div class="h-40 rounded-lg overflow-hidden shadow">
-                  <img :src="gallery3" alt="Gallery 3" class="w-full h-full object-cover">
+              <div class="rounded-lg overflow-hidden shadow flex justify-center items-center bg-zinc-100">
+                  <img :src="gallery3" alt="Gallery 3" class="w-full h-auto object-contain">
               </div>
-              <div class="rounded-lg overflow-hidden shadow col-span-2">
-                  <img :src="gallery4" alt="Gallery 4" class="w-full h-auto">
+              <div class="rounded-lg overflow-hidden shadow col-span-2 flex justify-center items-center bg-zinc-100">
+                  <img :src="gallery4" alt="Gallery 4" class="w-full h-auto object-contain">
               </div>
           </div>
       </div>

@@ -8,29 +8,10 @@ const props = defineProps<{
 }>();
 
 const targetHeader = ref<HTMLElement | null>(null);
-const targetAkad = ref<HTMLElement | null>(null);
-const targetResepsi = ref<HTMLElement | null>(null);
+const targetEvents = ref<HTMLElement | null>(null);
 
 const { isIntersecting: isHeaderIntersecting } = useIntersectionObserver(targetHeader);
-const { isIntersecting: isAkadIntersecting } = useIntersectionObserver(targetAkad);
-const { isIntersecting: isResepsiIntersecting } = useIntersectionObserver(targetResepsi);
-
-const akadAddressTitle = computed(() => props.invitation?.customTexts?.akadAddressTitle || 'KEDIAMAN MEMPELAI WANITA');
-const akadAddressDetails = computed(() => props.invitation?.customTexts?.akadAddressDetails || 'Kp. Cikareumbi RT 04/04, Gang Aki Sana, Desa Cikidang, Kec. Lembang, Kab. Bandung Barat');
-
-const resepsiAddressTitle = computed(() => props.invitation?.customTexts?.resepsiAddressTitle || 'KEDIAMAN MEMPELAI WANITA');
-const resepsiAddressDetails = computed(() => props.invitation?.customTexts?.resepsiAddressDetails || 'Kp. Cikareumbi RT 04/04, Gang Aki Sana, Desa Cikidang, Kec. Lembang, Kab. Bandung Barat');
-
-const akadMapUrl = computed(() => `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${akadAddressTitle.value} ${akadAddressDetails.value}`)}`);
-const resepsiMapUrl = computed(() => `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${resepsiAddressTitle.value} ${resepsiAddressDetails.value}`)}`);
-
-const eventDateObj = computed(() => {
-    let dateStr = '2026-12-12';
-    if (props.invitation?.customTexts?.eventDateRaw) {
-        dateStr = props.invitation.customTexts.eventDateRaw;
-    }
-    return new Date(dateStr);
-});
+const { isIntersecting: isEventsIntersecting } = useIntersectionObserver(targetEvents);
 
 const formatDateParts = (dateStr: string | undefined, defaultDateStr: string) => {
     const d = new Date(dateStr || defaultDateStr);
@@ -44,12 +25,57 @@ const formatDateParts = (dateStr: string | undefined, defaultDateStr: string) =>
     };
 };
 
-const akadDateObj = computed(() => formatDateParts(props.invitation?.customTexts?.akadDate, props.invitation?.customTexts?.eventDateRaw || '2026-12-12'));
-const resepsiDateObj = computed(() => formatDateParts(props.invitation?.customTexts?.resepsiDate, props.invitation?.customTexts?.eventDateRaw || '2026-12-12'));
+const eventDateObj = computed(() => {
+    let dateStr = '2026-12-12';
+    if (props.invitation?.customTexts?.eventDateRaw) {
+        dateStr = props.invitation.customTexts.eventDateRaw;
+    } else if (props.invitation?.events && props.invitation.events.length > 0) {
+        dateStr = props.invitation.events[0].date;
+    }
+    return new Date(dateStr);
+});
 
 const day = computed(() => eventDateObj.value.getDate().toString().padStart(2, '0'));
 const month = computed(() => (eventDateObj.value.getMonth() + 1).toString().padStart(2, '0'));
 const year = computed(() => eventDateObj.value.getFullYear().toString().slice(-2));
+
+const eventList = computed(() => {
+  if (props.invitation?.events && props.invitation.events.length > 0) {
+    return props.invitation.events.map(e => {
+      const dateParts = formatDateParts(e.date, props.invitation?.customTexts?.eventDateRaw || '2026-12-12');
+      return {
+        ...e,
+        dateObj: dateParts,
+        mapUrl: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${e.addressTitle} ${e.addressDetails}`)}`
+      };
+    });
+  }
+  
+  // Fallback for older data
+  const akadDateParts = formatDateParts(props.invitation?.customTexts?.akadDate, props.invitation?.customTexts?.eventDateRaw || '2026-12-12');
+  const resepsiDateParts = formatDateParts(props.invitation?.customTexts?.resepsiDate, props.invitation?.customTexts?.eventDateRaw || '2026-12-12');
+  
+  return [
+    {
+      id: 'akad',
+      title: props.invitation?.customTexts?.akadTitle || 'Akad Nikah',
+      dateObj: akadDateParts,
+      time: props.invitation?.customTexts?.akadTime || '08:00 - 10:00 WIB',
+      addressTitle: props.invitation?.customTexts?.akadAddressTitle || 'KEDIAMAN MEMPELAI WANITA',
+      addressDetails: props.invitation?.customTexts?.akadAddressDetails || 'Kp. Cikareumbi RT 04/04, Gang Aki Sana, Desa Cikidang, Kec. Lembang, Kab. Bandung Barat',
+      mapUrl: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${props.invitation?.customTexts?.akadAddressTitle || 'KEDIAMAN MEMPELAI WANITA'} ${props.invitation?.customTexts?.akadAddressDetails || 'Kp. Cikareumbi RT 04/04, Gang Aki Sana, Desa Cikidang, Kec. Lembang, Kab. Bandung Barat'}`)}`
+    },
+    {
+      id: 'resepsi',
+      title: props.invitation?.customTexts?.resepsiTitle || 'Resepsi Pernikahan',
+      dateObj: resepsiDateParts,
+      time: props.invitation?.customTexts?.resepsiTime || '10:00 - 18:00 WIB',
+      addressTitle: props.invitation?.customTexts?.resepsiAddressTitle || 'KEDIAMAN MEMPELAI WANITA',
+      addressDetails: props.invitation?.customTexts?.resepsiAddressDetails || 'Kp. Cikareumbi RT 04/04, Gang Aki Sana, Desa Cikidang, Kec. Lembang, Kab. Bandung Barat',
+      mapUrl: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${props.invitation?.customTexts?.resepsiAddressTitle || 'KEDIAMAN MEMPELAI WANITA'} ${props.invitation?.customTexts?.resepsiAddressDetails || 'Kp. Cikareumbi RT 04/04, Gang Aki Sana, Desa Cikidang, Kec. Lembang, Kab. Bandung Barat'}`)}`
+    }
+  ];
+});
 
 const eventBgImage = computed(() => {
     return props.invitation?.customImages?.event_bg || 'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=800&q=80';
@@ -155,65 +181,39 @@ onUnmounted(() => {
           </div>
       </div>
 
-      <!-- Bottom Section: Akad & Resepsi with hero_bg background -->
+      <!-- Bottom Section: Dynamic Events with hero_bg background -->
       <div class="relative w-full overflow-hidden py-24 px-6 rounded-t-[3rem] shadow-[0_-10px_30px_rgba(0,0,0,0.5)]">
           <img :src="heroBgImage" class="absolute inset-0 w-full h-full object-cover opacity-60" />
           <div class="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
           
-          <div class="relative z-10 space-y-12">
-              <!-- Akad Card -->
+          <div 
+            ref="targetEvents"
+            :class="[
+                'relative z-10 space-y-12 transition-all duration-800 ease-out will-change-[opacity,transform]',
+                isEventsIntersecting ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'
+            ]"
+          >
               <div 
-                ref="targetAkad"
-                :class="[
-                    'flex flex-col bg-white/10 backdrop-blur-md p-8 rounded-[2rem] border border-white/20 shadow-2xl transition-all duration-800 ease-out will-change-[opacity,transform]',
-                    isAkadIntersecting ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'
-                ]"
+                v-for="event in eventList" 
+                :key="event.id"
+                class="flex flex-col bg-white/10 backdrop-blur-md p-8 rounded-[2rem] border border-white/20 shadow-2xl"
               >
-                  <h3 class="font-wedding-serif text-[2.5rem] leading-none italic text-white mb-8 text-center">{{ props.invitation?.customTexts?.akadTitle || 'Akad Nikah' }}</h3>
+                  <h3 class="font-wedding-serif text-[2.5rem] leading-none italic text-white mb-8 text-center">{{ event.title }}</h3>
                   
                   <div class="mb-8 text-center border-b border-white/20 pb-8">
-                     <p class="font-wedding-serif text-lg tracking-widest uppercase text-zinc-300 mb-2">{{ akadDateObj.hari }}</p>
-                     <p class="font-wedding-serif text-[2rem] text-white tracking-widest mb-3 leading-none">{{ akadDateObj.day }} / {{ akadDateObj.month }} / {{ akadDateObj.fullYear }}</p>
-                     <p class="text-xs font-sans tracking-widest text-zinc-400 uppercase">{{ props.invitation?.customTexts?.akadTime || '08:00 - 10:00 WIB' }}</p>
+                     <p class="font-wedding-serif text-lg tracking-widest uppercase text-zinc-300 mb-2">{{ event.dateObj.hari }}</p>
+                     <p class="font-wedding-serif text-[2rem] text-white tracking-widest mb-3 leading-none">{{ event.dateObj.day }} / {{ event.dateObj.month }} / {{ event.dateObj.fullYear }}</p>
+                     <p class="text-xs font-sans tracking-widest text-zinc-400 uppercase">{{ event.time }}</p>
                   </div>
                   
                   <div class="mb-8 text-center">
                      <i class="fa-solid fa-location-dot text-white text-xl mb-3"></i>
-                     <p class="font-wedding-serif text-lg tracking-widest uppercase text-white mb-2">{{ akadAddressTitle }}</p>
-                     <p class="text-sm font-sans text-zinc-300 leading-relaxed">{{ akadAddressDetails }}</p>
+                     <p class="font-wedding-serif text-lg tracking-widest uppercase text-white mb-2">{{ event.addressTitle }}</p>
+                     <p class="text-sm font-sans text-zinc-300 leading-relaxed">{{ event.addressDetails }}</p>
                   </div>
                   
                   <div class="flex justify-center">
-                      <a :href="akadMapUrl" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center px-8 py-3 bg-white text-black text-xs font-bold uppercase tracking-wider hover:bg-zinc-200 transition rounded-full">
-                          <i class="fa-solid fa-map-location-dot mr-2"></i> Google Map
-                      </a>
-                  </div>
-              </div>
-
-              <!-- Resepsi Card -->
-              <div 
-                ref="targetResepsi"
-                :class="[
-                    'flex flex-col bg-white/10 backdrop-blur-md p-8 rounded-[2rem] border border-white/20 shadow-2xl transition-all duration-800 ease-out will-change-[opacity,transform]',
-                    isResepsiIntersecting ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'
-                ]"
-              >
-                  <h3 class="font-wedding-serif text-[2.5rem] leading-none italic text-white mb-8 text-center">{{ props.invitation?.customTexts?.resepsiTitle || 'Resepsi Pernikahan' }}</h3>
-                  
-                  <div class="mb-8 text-center border-b border-white/20 pb-8">
-                     <p class="font-wedding-serif text-lg tracking-widest uppercase text-zinc-300 mb-2">{{ resepsiDateObj.hari }}</p>
-                     <p class="font-wedding-serif text-[2rem] text-white tracking-widest mb-3 leading-none">{{ resepsiDateObj.day }} / {{ resepsiDateObj.month }} / {{ resepsiDateObj.fullYear }}</p>
-                     <p class="text-xs font-sans tracking-widest text-zinc-400 uppercase">{{ props.invitation?.customTexts?.resepsiTime || '10:00 - 18:00 WIB' }}</p>
-                  </div>
-                  
-                  <div class="mb-8 text-center">
-                     <i class="fa-solid fa-location-dot text-white text-xl mb-3"></i>
-                     <p class="font-wedding-serif text-lg tracking-widest uppercase text-white mb-2">{{ resepsiAddressTitle }}</p>
-                     <p class="text-sm font-sans text-zinc-300 leading-relaxed">{{ resepsiAddressDetails }}</p>
-                  </div>
-                  
-                  <div class="flex justify-center">
-                      <a :href="resepsiMapUrl" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center px-8 py-3 bg-white text-black text-xs font-bold uppercase tracking-wider hover:bg-zinc-200 transition rounded-full">
+                      <a :href="event.mapUrl" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center px-8 py-3 bg-white text-black text-xs font-bold uppercase tracking-wider hover:bg-zinc-200 transition rounded-full">
                           <i class="fa-solid fa-map-location-dot mr-2"></i> Google Map
                       </a>
                   </div>
@@ -222,3 +222,4 @@ onUnmounted(() => {
       </div>
   </section>
 </template>
+

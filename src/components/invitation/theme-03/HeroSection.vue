@@ -15,9 +15,11 @@ const groomName = computed(() => props.invitation?.customTexts?.groomName || 'DE
 const brideName = computed(() => props.invitation?.customTexts?.brideName || 'SOFIAH');
 const subtitle = computed(() => props.invitation?.customTexts?.coverSubtitle || 'THE WEDDING OF');
 const eventDateObj = computed(() => {
-    let dateStr = '2026-06-13';
+    let dateStr = '2026-12-12';
     if (props.invitation?.customTexts?.eventDateRaw) {
         dateStr = props.invitation.customTexts.eventDateRaw;
+    } else if (props.invitation?.events && props.invitation.events.length > 0) {
+        dateStr = props.invitation.events[0].date;
     }
     return new Date(dateStr);
 });

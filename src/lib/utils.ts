@@ -5,11 +5,15 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-export function getFormattedDate(customTexts: Record<string, string> | undefined, fallback = 'Sabtu, 13 Juni 2026'): string {
-  if (!customTexts) return fallback;
+export function getFormattedDate(invitation: any | undefined, fallback = 'Sabtu, 13 Juni 2026'): string {
+  if (!invitation) return fallback;
+  const customTexts = invitation.customTexts || {};
   if (customTexts.eventDateStr) return customTexts.eventDateStr;
   
-  const rawDate = customTexts.eventDateRaw || customTexts.akadDate || customTexts.resepsiDate;
+  const rawDate = customTexts.eventDateRaw || 
+                  (invitation.events && invitation.events.length > 0 ? invitation.events[0].date : null) || 
+                  customTexts.akadDate || 
+                  customTexts.resepsiDate;
   if (!rawDate) return fallback;
   
   try {

@@ -52,6 +52,9 @@ const gifts = computed(() => {
         }
     ];
 });
+
+const qrisImage = computed(() => props.invitation?.customImages?.gift_qris);
+const isModalOpen = ref(false);
 </script>
 
 <template>
@@ -93,7 +96,28 @@ const gifts = computed(() => {
                       </button>
                   </div>
               </div>
+              
+              <!-- QRIS Display -->
+              <div v-if="qrisImage" class="mt-8 animate-fade-in-up">
+                  <p class="text-[10px] text-zinc-500 mb-3 uppercase tracking-widest">Scan QRIS</p>
+                  <div class="bg-white p-6 rounded-2xl w-full shadow-[0_10px_20px_rgba(0,0,0,0.3)] hover:shadow-2xl transition duration-300 cursor-pointer" @click="isModalOpen = true">
+                      <img :src="qrisImage" alt="QRIS" class="w-full h-auto rounded-xl border border-zinc-100">
+                      <p class="text-[10px] text-zinc-500 mt-4 font-medium"><i class="fa-solid fa-magnifying-glass mr-1"></i> Ketuk untuk memperbesar</p>
+                  </div>
+              </div>
           </div>
       </div>
+
+      <!-- Modal Preview QRIS -->
+      <transition name="fade">
+          <div v-if="isModalOpen" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 backdrop-blur-sm p-6" @click="isModalOpen = false">
+              <div class="relative w-full max-w-sm bg-white rounded-3xl p-4 shadow-2xl" @click.stop>
+                  <button @click="isModalOpen = false" class="absolute -top-12 right-0 w-10 h-10 flex items-center justify-center bg-white/10 text-white rounded-full hover:bg-white/20 backdrop-blur-md transition">
+                      <i class="fa-solid fa-xmark text-lg"></i>
+                  </button>
+                  <img :src="qrisImage" alt="QRIS Preview" class="w-full h-auto rounded-2xl">
+              </div>
+          </div>
+      </transition>
   </section>
 </template>

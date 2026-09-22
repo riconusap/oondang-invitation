@@ -13,6 +13,15 @@ export interface GiftChannel {
   accountName: string; // Receiver name
 }
 
+export interface EventDetails {
+  id: string;
+  title: string;
+  date: string;
+  time: string;
+  addressTitle: string;
+  addressDetails: string;
+}
+
 export interface Invitation {
   subdomain: string;
   ownerId: string;
@@ -23,6 +32,7 @@ export interface Invitation {
   musicUrl?: string;
   stories?: LoveStory[];
   gifts?: GiftChannel[];
+  events?: EventDetails[];
   galleryUrls: string[];
   createdAt: string;
   updatedAt: string;

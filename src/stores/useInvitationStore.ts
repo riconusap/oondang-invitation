@@ -43,6 +43,7 @@ export const useInvitationStore = defineStore('invitation', () => {
             customImages: row.customImages || {},
             stories: row.stories || [],
             gifts: row.gifts || [],
+            events: row.events || [],
             galleryUrls: row.galleryUrls || [],
             createdAt: row.createdAt || new Date().toISOString(),
             updatedAt: row.updatedAt || new Date().toISOString()
@@ -85,6 +86,7 @@ export const useInvitationStore = defineStore('invitation', () => {
           customImages: data.customImages || {},
           stories: data.stories || [],
           gifts: data.gifts || [],
+          events: data.events || [],
           galleryUrls: data.galleryUrls || [],
           musicUrl: data.musicUrl,
           createdAt: data.createdAt || new Date().toISOString(),
@@ -135,6 +137,10 @@ export const useInvitationStore = defineStore('invitation', () => {
         { id: '1', type: 'BANK', name: 'BCA', accountNumber: '1234567890', accountName: 'Deni Nursalam' },
         { id: '2', type: 'BANK', name: 'Mandiri', accountNumber: '0987654321', accountName: 'Sofiah Ramadhani' }
       ] as any,
+      events: [
+        { id: '1', title: 'Akad Nikah', date: '2026-06-13', time: '08:00 - 10:00 WIB', addressTitle: 'KUA Kecamatan Setempat', addressDetails: 'Jl. Pernikahan No. 123, Kota Bahagia, Provinsi Sejahtera 40123' },
+        { id: '2', title: 'Resepsi', date: '2026-06-13', time: '11:00 - Selesai', addressTitle: 'Gedung Serbaguna', addressDetails: 'Jl. Kebahagiaan No. 456, Kota Bahagia, Provinsi Sejahtera 40123' }
+      ],
       galleryUrls: [
         'https://images.unsplash.com/photo-1519225421980-715cb0215aed?q=80&w=800&auto=format&fit=crop',
         'https://images.unsplash.com/photo-1606800052052-a08af7148866?q=80&w=800&auto=format&fit=crop',
@@ -243,6 +249,10 @@ export const useInvitationStore = defineStore('invitation', () => {
             { id: '1', type: 'BANK', name: 'BCA', accountNumber: '1234567890', accountName: 'Deni Nursalam' },
             { id: '2', type: 'BANK', name: 'Mandiri', accountNumber: '0987654321', accountName: 'Sofiah Ramadhani' }
           ],
+          events: [
+            { id: '1', title: 'Akad Nikah', date: '2026-06-13', time: '08:00 - 10:00 WIB', addressTitle: 'KUA Kecamatan Setempat', addressDetails: 'Jl. Pernikahan No. 123, Kota Bahagia, Provinsi Sejahtera 40123' },
+            { id: '2', title: 'Resepsi', date: '2026-06-13', time: '11:00 - Selesai', addressTitle: 'Gedung Serbaguna', addressDetails: 'Jl. Kebahagiaan No. 456, Kota Bahagia, Provinsi Sejahtera 40123' }
+          ],
           galleryUrls: [],
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString()
@@ -263,7 +273,7 @@ export const useInvitationStore = defineStore('invitation', () => {
   };
 
   // Update kustomisasi teks dan galeri
-  const updateCustomization = async (subdomain: string, data: { customTexts?: Record<string, string>; customImages?: Record<string, string>; galleryUrls?: string[]; stories?: any[]; gifts?: any[]; musicUrl?: string }): Promise<boolean> => {
+  const updateCustomization = async (subdomain: string, data: { customTexts?: Record<string, string>; customImages?: Record<string, string>; galleryUrls?: string[]; stories?: any[]; gifts?: any[]; events?: any[]; musicUrl?: string }): Promise<boolean> => {
     isLoading.value = true;
     error.value = null;
 
@@ -274,6 +284,7 @@ export const useInvitationStore = defineStore('invitation', () => {
       if (data.galleryUrls) updatePayload.galleryUrls = data.galleryUrls;
       if (data.stories) updatePayload.stories = data.stories;
       if (data.gifts) updatePayload.gifts = data.gifts;
+      if (data.events) updatePayload.events = data.events;
       if (data.musicUrl !== undefined) updatePayload.musicUrl = data.musicUrl;
       
       const { error: updateError } = await supabase
@@ -290,6 +301,7 @@ export const useInvitationStore = defineStore('invitation', () => {
         if (data.galleryUrls) currentInvitation.value.galleryUrls = data.galleryUrls;
         if (data.stories) currentInvitation.value.stories = data.stories;
         if (data.gifts) currentInvitation.value.gifts = data.gifts;
+        if (data.events) currentInvitation.value.events = data.events;
         if (data.musicUrl !== undefined) currentInvitation.value.musicUrl = data.musicUrl;
       }
       
@@ -387,6 +399,25 @@ export const useInvitationStore = defineStore('invitation', () => {
     }
   };
 
+  const addLocalEvent = (event: any) => {
+    if (currentInvitation.value) {
+      if (!currentInvitation.value.events) currentInvitation.value.events = [];
+      currentInvitation.value.events.push(event);
+    }
+  };
+
+  const updateLocalEvent = (index: number, event: any) => {
+    if (currentInvitation.value && currentInvitation.value.events) {
+      currentInvitation.value.events[index] = event;
+    }
+  };
+
+  const removeLocalEvent = (index: number) => {
+    if (currentInvitation.value && currentInvitation.value.events) {
+      currentInvitation.value.events.splice(index, 1);
+    }
+  };
+
   return {
     invitations,
     currentInvitation,
@@ -408,6 +439,9 @@ export const useInvitationStore = defineStore('invitation', () => {
     removeLocalStory,
     addLocalGift,
     updateLocalGift,
-    removeLocalGift
+    removeLocalGift,
+    addLocalEvent,
+    updateLocalEvent,
+    removeLocalEvent
   };
 });
