@@ -30,35 +30,14 @@ const copyText = (text: string) => {
 const giftTitle = computed(() => props.invitation?.customTexts?.giftTitle || 'Wedding Gift');
 const giftSubtitle = computed(() => props.invitation?.customTexts?.giftSubtitle || 'Tanpa mengurangi rasa hormat, bagi Bapak/Ibu/Saudara/i yang ingin memberikan tanda kasih untuk kami, dapat melalui:');
 
-const gifts = computed(() => {
-    if (props.invitation?.gifts && props.invitation.gifts.length > 0) {
-        return props.invitation.gifts;
-    }
-    // Default gifts if empty
-    return [
-        {
-            id: '1',
-            type: 'BANK',
-            name: 'BCA',
-            accountNumber: '1370410808',
-            accountName: 'Deni Nursalam'
-        },
-        {
-            id: '2',
-            type: 'BANK',
-            name: 'BRI',
-            accountNumber: '4119 0102 3150 534',
-            accountName: 'Sofiah Ramadhani'
-        }
-    ];
-});
+const gifts = computed(() => props.invitation?.gifts || []);
 
 const qrisImage = computed(() => props.invitation?.customImages?.gift_qris);
 const isModalOpen = ref(false);
 </script>
 
 <template>
-  <section class="py-24 px-6 bg-[#141414] text-center border-t border-sage-200 rounded-t-[3rem] relative z-40">
+  <section v-if="gifts.length > 0 || qrisImage" class="py-24 px-6 bg-[#141414] text-center border-t border-sage-200 rounded-t-[3rem] relative z-40">
       <div 
         ref="targetContainer"
         :class="[
